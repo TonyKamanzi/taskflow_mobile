@@ -21,31 +21,31 @@ export default function HomeScreen() {
   const completedTasks = tasks.filter((task) => task.completed).length;
 
   return (
-    <ScrollView className="flex-1 bg-[#0f0f1e]">
+    <ScrollView className="flex-1 dark:bg-[#0f0f1e] bg-gray-100">
       <HomeHeader />
 
       <View className="px-5 pt-6">
         {/* Greeting */}
         <View className="mb-4">
-          <Text className="text-3xl font-bold text-white">
+          <Text className="text-3xl font-bold dark:text-white">
             Good morning, Tony
           </Text>
         </View>
 
         {/* Progress */}
-        <View className="mb-4 w-full rounded-lg bg-[#1e1e2e] p-4">
-          <Text className="text-gray-400">Today's Progress:</Text>
+        <View className="mb-4 w-full dark:rounded-lg dark:bg-[#1e1e2e] bg-gray-200 rounded-lg p-4">
+          <Text className="dark:text-gray-400">Today's Progress:</Text>
 
-          <Text className="mt-2 text-gray-400">
+          <Text className="mt-2 dark:text-gray-400">
             {completedTasks}/{tasks.length} tasks completed
           </Text>
         </View>
 
         {/* Tasks */}
         <View className="mb-4 p-4">
-          <Text className="my-2 text-xl text-white">Today's Tasks:</Text>
+          <Text className="my-2 text-xl dark:text-white">Today's Tasks:</Text>
 
-          <View className="w-full rounded-lg bg-[#1e1e2e] p-4">
+          <View className="w-full dark:rounded-lg bg-gray-200 rounded-md dark:bg-[#1e1e2e] p-4">
             {tasks.map((task) => (
               <Pressable
                 key={task.id}
@@ -61,7 +61,7 @@ export default function HomeScreen() {
                   }`}
                 >
                   {task.completed && (
-                    <Text className="font-bold text-white">✓</Text>
+                    <Text className="font-bold dark:text-white">✓</Text>
                   )}
                 </View>
 
@@ -69,8 +69,8 @@ export default function HomeScreen() {
                 <Text
                   className={`flex-1 text-lg ${
                     task.completed
-                      ? "text-gray-500 line-through"
-                      : "text-gray-300"
+                      ? "dark:text-gray-500 line-through"
+                      : "dark:text-gray-300"
                   }`}
                 >
                   {task.title}
