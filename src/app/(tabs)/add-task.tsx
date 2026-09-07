@@ -1,25 +1,28 @@
 import { useState } from "react";
 import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
+import { useRouter } from "expo-router";
+import { useTasks } from "@/context/TaskContext";
 
 export default function AddTask() {
+  const router = useRouter();
+  const { addTask } = useTasks();
+
   const [title, setTitle] = useState("");
   const [date, setDate] = useState("Today");
-  const [priority, setPriority] = useState("Medium");
+  const [priority, setPriority] = useState<"Low" | "Medium" | "High">("Medium");
 
-  const handleAddTask = () => {
+  const handleAddTask = async () => {
     if (!title.trim()) {
       return;
     }
 
-    console.log({
-      title,
-      date,
-      priority,
-    });
+    await addTask(title, date, priority);
 
     setTitle("");
     setDate("Today");
     setPriority("Medium");
+
+    router.push("/(tabs)/tasks");
   };
 
   return (
@@ -27,7 +30,6 @@ export default function AddTask() {
       className="flex-1 bg-white dark:bg-[#0f0f1e]"
       contentContainerStyle={{ paddingBottom: 120 }}
     >
-      {/* Header */}
       <View className="mt-12 items-center">
         <Text className="text-4xl font-bold text-black dark:text-white">
           Add Task
@@ -38,9 +40,7 @@ export default function AddTask() {
         </Text>
       </View>
 
-      {/* Form */}
       <View className="px-5 pt-8">
-        {/* Task title */}
         <Text className="mb-2 text-lg font-semibold text-black dark:text-white">
           Task Title
         </Text>
@@ -53,7 +53,6 @@ export default function AddTask() {
           className="rounded-xl border border-gray-300 bg-gray-100 px-4 py-4 text-black dark:border-gray-700 dark:bg-[#1e1e2e] dark:text-white"
         />
 
-        {/* Date */}
         <Text className="mb-3 mt-6 text-lg font-semibold text-black dark:text-white">
           Due Date
         </Text>
@@ -80,7 +79,6 @@ export default function AddTask() {
           ))}
         </View>
 
-        {/* Priority */}
         <Text className="mb-3 mt-6 text-lg font-semibold text-black dark:text-white">
           Priority
         </Text>
@@ -89,7 +87,7 @@ export default function AddTask() {
           {["Low", "Medium", "High"].map((item) => (
             <Pressable
               key={item}
-              onPress={() => setPriority(item)}
+              onPress={() => setPriority(item as "Low" | "Medium" | "High")}
               className={`flex-1 rounded-xl p-4 ${
                 priority === item
                   ? "bg-pink-500"
@@ -113,7 +111,6 @@ export default function AddTask() {
           ))}
         </View>
 
-        {/* Add button */}
         <Pressable
           onPress={handleAddTask}
           className="mt-8 rounded-xl bg-pink-500 p-4"
