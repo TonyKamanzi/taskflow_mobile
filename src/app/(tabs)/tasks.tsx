@@ -1,7 +1,8 @@
 import { DeleteTaskModal } from "@/components/DeleteTaskModal";
+import { SwipeableTask } from "@/components/SwipeableTask";
 import { useTasks } from "@/context/TaskContext";
 import { useState } from "react";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 
 export default function Tasks() {
   const { tasks, loading, toggleTask, deleteTask } = useTasks();
@@ -69,7 +70,7 @@ export default function Tasks() {
 
         {/* Statistics */}
         <View className="flex-row justify-between mx-5 mt-8">
-          {/* Total Tasks */}
+          {/* Total */}
           <View className="flex-1 rounded-2xl bg-gray-100 p-4 dark:bg-[#1e1e2e]">
             <Text className="text-sm text-gray-500 dark:text-gray-400">
               Total Tasks
@@ -111,63 +112,18 @@ export default function Tasks() {
               </View>
             ) : (
               tasks.map((task) => (
-                <Pressable
+                <SwipeableTask
                   key={task.id}
-                  onPress={() => toggleTask(task.id)}
+                  task={task}
+                  onToggle={() => toggleTask(task.id)}
                   onLongPress={() => handleLongPress(task.id, task.title)}
-                  delayLongPress={500}
-                  className="flex-row items-center mb-4"
-                >
-                  {/* Checkbox */}
-                  <View
-                    className={`mr-3 h-6 w-6 items-center justify-center rounded-md border-2 ${
-                      task.completed
-                        ? "border-pink-500 bg-pink-500"
-                        : "border-gray-400 dark:border-gray-500"
-                    }`}
-                  >
-                    {task.completed && (
-                      <Text className="font-bold text-white">✓</Text>
-                    )}
-                  </View>
-
-                  {/* Task information */}
-                  <View className="flex-1">
-                    <Text
-                      className={`text-lg ${
-                        task.completed
-                          ? "text-gray-400 line-through"
-                          : "text-black dark:text-gray-200"
-                      }`}
-                    >
-                      {task.title}
-                    </Text>
-
-                    <Text className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                      {task.date}
-                    </Text>
-                  </View>
-
-                  {/* Priority */}
-                  <Text
-                    className={`text-sm font-semibold ${
-                      task.priority === "High"
-                        ? "text-red-500"
-                        : task.priority === "Medium"
-                          ? "text-yellow-500"
-                          : "text-green-500"
-                    }`}
-                  >
-                    {task.priority}
-                  </Text>
-                </Pressable>
+                />
               ))
             )}
           </View>
         </View>
       </ScrollView>
 
-      {/* Delete confirmation modal */}
       <DeleteTaskModal
         visible={deleteModalVisible}
         taskTitle={selectedTask?.title ?? ""}

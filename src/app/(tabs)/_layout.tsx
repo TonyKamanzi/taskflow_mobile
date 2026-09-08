@@ -58,6 +58,13 @@ export default function TabsLayout() {
           ),
         }}
       />
+      <Tabs.Screen
+        name="edit-task"
+        options={{
+          href: null,
+          title: "Edit Task",
+        }}
+      />
     </Tabs>
   );
 }

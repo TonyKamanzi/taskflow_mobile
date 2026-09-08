@@ -1,5 +1,11 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { createContext, ReactNode, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 export type Task = {
   id: string;
@@ -12,12 +18,22 @@ export type Task = {
 type TaskContextType = {
   tasks: Task[];
   loading: boolean;
+
   addTask: (
     title: string,
     date: string,
-    priority: "Low" | "Medium" | "High"
+    priority: "Low" | "Medium" | "High",
   ) => Promise<void>;
+
+  updateTask: (
+    id: string,
+    title: string,
+    date: string,
+    priority: "Low" | "Medium" | "High",
+  ) => Promise<void>;
+
   toggleTask: (id: string) => Promise<void>;
+
   deleteTask: (id: string) => Promise<void>;
 };
 
@@ -48,13 +64,10 @@ export function TaskProvider({ children }: { children: ReactNode }) {
     loadTasks();
   }, []);
 
-  // Save tasks to local storage
+  // Save tasks to AsyncStorage
   const saveTasks = async (updatedTasks: Task[]) => {
     try {
-      await AsyncStorage.setItem(
-        TASKS_KEY,
-        JSON.stringify(updatedTasks)
-      );
+      await AsyncStorage.setItem(TASKS_KEY, JSON.stringify(updatedTasks));
 
       setTasks(updatedTasks);
     } catch (error) {
@@ -62,11 +75,11 @@ export function TaskProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  // Add a new task
+  // Add task
   const addTask = async (
     title: string,
     date: string,
-    priority: "Low" | "Medium" | "High"
+    priority: "Low" | "Medium" | "High",
   ) => {
     const newTask: Task = {
       id: Date.now().toString(),
@@ -81,12 +94,36 @@ export function TaskProvider({ children }: { children: ReactNode }) {
     await saveTasks(updatedTasks);
   };
 
-  // Complete/uncomplete task
+  // Update task
+  const updateTask = async (
+    id: string,
+    title: string,
+    date: string,
+    priority: "Low" | "Medium" | "High",
+  ) => {
+    const updatedTasks = tasks.map((task) =>
+      task.id === id
+        ? {
+            ...task,
+            title: title.trim(),
+            date,
+            priority,
+          }
+        : task,
+    );
+
+    await saveTasks(updatedTasks);
+  };
+
+  // Complete / uncomplete task
   const toggleTask = async (id: string) => {
     const updatedTasks = tasks.map((task) =>
       task.id === id
-        ? { ...task, completed: !task.completed }
-        : task
+        ? {
+            ...task,
+            completed: !task.completed,
+          }
+        : task,
     );
 
     await saveTasks(updatedTasks);
@@ -94,9 +131,7 @@ export function TaskProvider({ children }: { children: ReactNode }) {
 
   // Delete task
   const deleteTask = async (id: string) => {
-    const updatedTasks = tasks.filter(
-      (task) => task.id !== id
-    );
+    const updatedTasks = tasks.filter((task) => task.id !== id);
 
     await saveTasks(updatedTasks);
   };
@@ -107,6 +142,7 @@ export function TaskProvider({ children }: { children: ReactNode }) {
         tasks,
         loading,
         addTask,
+        updateTask,
         toggleTask,
         deleteTask,
       }}
